@@ -8,7 +8,7 @@
 if [ $USER != 'root' ]; then
 	echo "Sorry, you need to run this as root"
 	exit
-fikli
+fi
 
 
 if [ ! -e /dev/net/tun ]; then
