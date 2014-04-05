@@ -208,7 +208,7 @@ else
 	cipher AES-128-CBC
 	ca [inline]'
 	
-	echo "$client" > $CLIENT.conf
+	echo "$Client" > $CLIENT.conf
 	cp /etc/openvpn/easy-rsa/2.0/keys/ca.crt ~/ovpn-$CLIENT
 	#cp /etc/openvpn/easy-rsa/2.0/keys/$CLIENT.crt ~/ovpn-$CLIENT
 	#cp /etc/openvpn/easy-rsa/2.0/keys/$CLIENT.key ~/ovpn-$CLIENT
