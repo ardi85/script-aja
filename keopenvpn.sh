@@ -119,7 +119,7 @@ else
 	cert /etc/openvpn/server.crt
 	key /etc/openvpn/server.key
 	dh /etc/openvpn/dh1024.pem
-	plugin /usr/share/openvpn/plugin/lib/openvpn-auth-pam.so /etc/pam.d/login
+	plugin /usr/lib/openvpn/openvpn-auth-pam.so /etc/pam.d/login
 	client-cert-not-required
 	username-as-common-name
 	server 10.8.0.0 255.255.255.0
