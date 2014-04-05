@@ -138,18 +138,10 @@ else
 	verb 3'
 	
 	echo "$SERVER" > /etc/openvpn/server.conf
-	#cd /usr/share/doc/openvpn/examples/sample-config-files
-	#gunzip -d server.conf.gz
-	#cp server.conf /etc/openvpn/
+
 	cd /etc/openvpn/easy-rsa/2.0/keys
 	cp ca.crt ca.key dh1024.pem server.crt server.key /etc/openvpn
-	#cd /etc/openvpn/
-	# Set the server configuration
-	#sed -i 's|dh dh1024.pem|dh dh2048.pem|' server.conf
-	#sed -i 's|;push "redirect-gateway def1 bypass-dhcp"|push "redirect-gateway def1 bypass-dhcp"|' server.conf
-	#sed -i 's|;push "dhcp-option DNS 208.67.222.222"|push "dhcp-option DNS 8.8.8.8"|' server.conf
-	#sed -i 's|;push "dhcp-option DNS 208.67.220.220"|push "dhcp-option DNS 8.8.4.4"|' server.conf
-	sed -i "s|port 1194|port $PORT|" server.conf
+	sed -i "s|port 1194|port $PORT|" /etc/openvpn/server.conf
 	# Listen at port 53 too if user wants that
 	if [ $ALTPORT = 'y' ]; then
 		iptables -t nat -A PREROUTING -p udp -d $IP --dport 53 -j REDIRECT --to-port 1194
@@ -184,9 +176,7 @@ else
 	fi
 	# IP/port set on the default client.conf so we can add further users
 	# without asking for them
-	#sed -i "s|remote my-server-1 1194|remote $IP $PORT|" /usr/share/doc/openvpn/examples/sample-config-files/client.conf
-	#cp /usr/share/doc/openvpn/examples/sample-config-files/client.conf ~/ovpn-$CLIENT/$CLIENT.conf
-	
+
 	klient="
 	client
 	proto tcp
@@ -210,34 +200,16 @@ else
 	
 	echo "$klient" > ~/ovpn-$CLIENT/$CLIENT.conf
 	cp /etc/openvpn/easy-rsa/2.0/keys/ca.crt ~/ovpn-$CLIENT
-	#cp /etc/openvpn/easy-rsa/2.0/keys/$CLIENT.crt ~/ovpn-$CLIENT
-	#cp /etc/openvpn/easy-rsa/2.0/keys/$CLIENT.key ~/ovpn-$CLIENT
+
 	cd ~/ovpn-$CLIENT
-	#sed -i "s|cert client.crt|cert $CLIENT.crt|" $CLIENT.conf
-	#sed -i "s|key client.key|key $CLIENT.key|" $CLIENT.conf
-	#echo "remote-cert-tls server" >> $CLIENT.conf
 	
 	cp $CLIENT.conf $CLIENT.ovpn
-	
-	#sed -i "s|ca ca.crt|ca [inline]|" $CLIENT.ovpn
-	#sed -i "s|cert $CLIENT.crt|cert [inline]|" $CLIENT.ovpn
-	#sed -i "s|key $CLIENT.key|key [inline]|" $CLIENT.ovpn
-	#echo -e "keepalive 10 60\n" >> $CLIENT.ovpn
+
 	
 	echo "<ca>" >> $CLIENT.ovpn
 	cat ca.crt >> $CLIENT.ovpn
 	echo -e "</ca>\n" >> $CLIENT.ovpn
 	
-	#echo "<cert>" >> $CLIENT.ovpn
-	#sed -n "/-----BEGIN CERTIFICATE-----/,/-----END CERTIFICATE-----/p" $CLIENT.crt >> $CLIENT.ovpn
-	#echo -e "</cert>\n" >> $CLIENT.ovpn
-	
-	#echo "<key>" >> $CLIENT.ovpn
-	#cat $CLIENT.key >> $CLIENT.ovpn
-	#echo -e "</key>\n" >> $CLIENT.ovpn
-
-	#tar -czf ../ovpn-$CLIENT.tar.gz $CLIENT.conf ca.crt $CLIENT.crt $CLIENT.key $CLIENT.ovpn
-	tar -czf ../ovpn-$CLIENT.tar.gz $CLIENT.conf ca.crt $CLIENT.ovpn
 	cd ~/
 	rm -rf ovpn-$CLIENT
 	echo ""
