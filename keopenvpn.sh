@@ -8,7 +8,7 @@
 if [ $USER != 'root' ]; then
 	echo "Sorry, you need to run this as root"
 	exit
-fi
+fikli
 
 
 if [ ! -e /dev/net/tun ]; then
@@ -187,7 +187,7 @@ else
 	#sed -i "s|remote my-server-1 1194|remote $IP $PORT|" /usr/share/doc/openvpn/examples/sample-config-files/client.conf
 	#cp /usr/share/doc/openvpn/examples/sample-config-files/client.conf ~/ovpn-$CLIENT/$CLIENT.conf
 	
-	klient='
+	klient="
 	client
 	proto tcp
 	persist-key
@@ -206,7 +206,7 @@ else
 	route-delay 2
 	remote $IP 1194
 	cipher AES-128-CBC
-	ca [inline]'
+	ca [inline]"
 	
 	echo "$klient" > ~/ovpn-$CLIENT/$CLIENT.conf
 	cp /etc/openvpn/easy-rsa/2.0/keys/ca.crt ~/ovpn-$CLIENT
