@@ -204,7 +204,7 @@ else
 	script-security 2
 	route-method exe
 	route-delay 2
-	remote $IP 1194
+	remote $IP $PORT
 	cipher AES-128-CBC
 	ca [inline]"
 	
