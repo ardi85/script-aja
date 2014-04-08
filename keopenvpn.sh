@@ -210,6 +210,7 @@ else
 	cat ca.crt >> $CLIENT.ovpn
 	echo -e "</ca>\n" >> $CLIENT.ovpn
 	
+	tar -czf ../ovpn-$CLIENT.tar.gz $CLIENT.conf ca.crt $CLIENT.ovpn
 	cd ~/
 	rm -rf ovpn-$CLIENT
 	echo ""
