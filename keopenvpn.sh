@@ -141,7 +141,7 @@ else
 
 	cd /etc/openvpn/easy-rsa/2.0/keys
 	cp ca.crt ca.key dh1024.pem server.crt server.key /etc/openvpn
-	sed -i "s|port 1194|port $PORT|" /etc/openvpn/server.conf
+	sed -i "s/port 1194/port $PORT/" /etc/openvpn/server.conf
 	# Listen at port 53 too if user wants that
 	if [ $ALTPORT = 'y' ]; then
 		iptables -t nat -A PREROUTING -p udp -d $IP --dport 53 -j REDIRECT --to-port 1194
@@ -152,10 +152,14 @@ else
 	# Avoid an unneeded reboot
 	echo 1 > /proc/sys/net/ipv4/ip_forward
 	# Set iptables
-	iptables -t nat -A POSTROUTING -s 10.8.0.0/24 -j SNAT --to $IP
-	iptables -t nat -A POSTROUTING -s 10.8.0.0/24 -o eth0 -j MASQUERADE 
-	iptables -t nat -A POSTROUTING -s 10.8.0.0/24 -o venet0 -j SNAT --to $IP
-	sed -i "/# By default this script does nothing./a\iptables -t nat -A POSTROUTING -s 10.8.0.0/24 -j SNAT --to $IP" /etc/rc.local
+	if [ $(ifconfig | cut -c 1-8 | sort | uniq -u | grep venet0 | grep -v venet0:) = "venet0" ];then
+      		iptables -t nat -A POSTROUTING -o venet0 -j SNAT --to-source $IP
+	else
+      		iptables -t nat -A POSTROUTING -s 10.8.0.0/24 -j SNAT --to $IP
+      		iptables -t nat -A POSTROUTING -s 10.8.0.0/24 -o eth0 -j MASQUERADE
+	fi	
+	sed -i "/# By default this script does nothing./a\ip10tables -t nat -A POSTROUTING -s 10.8.0.0/24 -j SNAT --to $IP" /etc/rc.local
+	iptables-save
 	# And finally, restart OpenVPN
 	/etc/init.d/openvpn restart
 	# Let's generate the client config
