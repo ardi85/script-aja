@@ -1,5 +1,7 @@
 #!/bin/bash
 # seluruh isi file di ambil dari http://github.com/yurisshOS/
+
+
 # initialisasi var
 OS=`uname -m`;
 MYIP=`ifconfig | grep -Eo 'inet (addr:)?([0-9]*\.){3}[0-9]*' | grep -Eo '([0-9]*\.){3}[0-9]*' | grep -v '127.0.0.1' | grep -v '127.0.0.2'`;
@@ -7,6 +9,40 @@ MYIP2="s/xxxxxxxxx/$MYIP/g";
 
 # go to root
 cd
+
+# disable ipv6
+echo 1 > /proc/sys/net/ipv6/conf/all/disable_ipv6
+sed -i '$ i\echo 1 > /proc/sys/net/ipv6/conf/all/disable_ipv6' /etc/rc.local
+sed -i '$ i\echo 1 > /proc/sys/net/ipv6/conf/all/disable_ipv6' /etc/rc.d/rc.local
+
+# install wget and curl
+yum -y install wget curl
+
+# set time GMT +7
+ln -fs /usr/share/zoneinfo/Asia/Jakarta /etc/localtime
+
+# set locale
+sed -i 's/AcceptEnv/#AcceptEnv/g' /etc/ssh/sshd_config
+service sshd restart
+
+# setting repo
+wget http://dl.fedoraproject.org/pub/epel/6/i386/epel-release-6-8.noarch.rpm
+wget http://rpms.famillecollet.com/enterprise/remi-release-6.rpm
+rpm -Uvh epel-release-6-8.noarch.rpm
+rpm -Uvh remi-release-6.rpm
+
+if [ "$OS" == "x86_64" ]; then
+  wget http://pkgs.repoforge.org/rpmforge-release/rpmforge-release-0.5.3-1.el6.rf.x86_64.rpm
+  rpm -Uvh rpmforge-release-0.5.3-1.el6.rf.x86_64.rpm
+else
+  wget http://pkgs.repoforge.org/rpmforge-release/rpmforge-release-0.5.3-1.el6.rf.i686.rpm
+  rpm -Uvh rpmforge-release-0.5.3-1.el6.rf.i686.rpm
+fi
+
+sed -i 's/enabled = 1/enabled = 0/g' /etc/yum.repos.d/rpmforge.repo
+sed -i -e "/^\[remi\]/,/^\[.*\]/ s|^\(enabled[ \t]*=[ \t]*0\\)|enabled=1|" /etc/yum.repos.d/remi.repo
+rm -f *.rpm
+
 
 # install openvpn
 wget -O /etc/openvpn/openvpn.tar "https://raw.github.com/yurisshOS/debian7/master/openvpn-debian.tar"
