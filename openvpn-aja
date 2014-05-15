@@ -39,7 +39,7 @@ cp client.tar /var/www/
 cp client.tar /var/www/html
 cd
 
-# info
+# info 
 clear
 echo "Autoscript OpenVPN Ajah" | tee log-install.txt
 echo "==========================================" | tee -a log-install.txt
