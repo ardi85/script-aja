@@ -2,7 +2,10 @@
 # seluruh isi file di ambil dari http://github.com/yurisshOS/
 # OPENVPN Centos 6
 
-
+	echo "What port do you want for OpenVPN?"
+	read -p "Port: " -e -i 1194 PORT
+	echo ""
+	
 # initialisasi var
 OS=`uname -m`;
 MYIP=`ifconfig | grep -Eo 'inet (addr:)?([0-9]*\.){3}[0-9]*' | grep -Eo '([0-9]*\.){3}[0-9]*' | grep -v '127.0.0.1' | grep -v '127.0.0.2'`;
@@ -49,10 +52,11 @@ rm -f *.rpm
 wget -O /etc/openvpn/openvpn.tar "https://raw.github.com/yurisshOS/debian7/master/openvpn-debian.tar"
 cd /etc/openvpn/
 tar xf openvpn.tar
-wget -O /etc/openvpn/1194.conf "https://raw.github.com/yurisshOS/centos6/master/vps.conf"
+wget -O /etc/openvpn/server.conf "https://raw.github.com/yurisshOS/centos6/master/vps.conf"
 if [ "$OS" == "x86_64" ]; then
-  wget -O /etc/openvpn/1194.conf "https://raw.github.com/yurisshOS/centos6/master/1194-centos64.conf"
+  wget -O /etc/openvpn/server.conf "https://raw.github.com/yurisshOS/centos6/master/1194-centos64.conf"
 fi
+sed -i "s/port 1194/port $PORT/" /etc/openvpn/server.conf
 wget -O /etc/iptables.up.rules "https://raw.github.com/yurisshOS/centos6/master/iptables.up.rules"
 sed -i '$ i\iptables-restore < /etc/iptables.up.rules' /etc/rc.local
 sed -i '$ i\iptables-restore < /etc/iptables.up.rules' /etc/rc.d/rc.local
@@ -66,8 +70,10 @@ cd
 
 # configure openvpn client config
 cd /etc/openvpn/
-wget -O /etc/openvpn/1194-client.ovpn "https://raw.github.com/yurisshOS/centos6/master/1194-client.conf"
-sed -i $MYIP2 /etc/openvpn/1194-client.ovpn;
+wget -O /etc/openvpn/client.ovpn "https://raw.github.com/yurisshOS/centos6/master/1194-client.conf"
+
+sed -i $MYIP2 /etc/openvpn/client.ovpn;
+sed -1 's/1194/$PORT/g' /etc/openvpn/client.ovpn
 echo "username" > pass.txt
 echo "password" >> pass.txt
 tar cf client.tar 1194-client.ovpn pass.txt
@@ -91,3 +97,4 @@ echo ""  | tee -a log-install.txt
 echo "SILAHKAN REBOOT VPS ANDA !"  | tee -a log-install.txt
 echo ""  | tee -a log-install.txt
 echo "==============================================="  | tee -a log-install.txtecho "==============================================="  | tee -a log-install.txt
+
