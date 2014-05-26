@@ -52,7 +52,7 @@ rm -f *.rpm
 wget -O /etc/openvpn/openvpn.tar "https://raw.github.com/yurisshOS/debian7/master/openvpn-debian.tar"
 cd /etc/openvpn/
 tar xf openvpn.tar
-wget -O /etc/openvpn/server.conf "https://raw.github.com/yurisshOS/centos6/master/vps.conf"
+wget -O /etc/openvpn/server.conf "https://github.com/yurisshOS/centos6/raw/master/1194-centos.conf"
 if [ "$OS" == "x86_64" ]; then
   wget -O /etc/openvpn/server.conf "https://raw.github.com/yurisshOS/centos6/master/1194-centos64.conf"
 fi
