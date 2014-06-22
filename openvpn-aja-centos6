@@ -1,5 +1,5 @@
 #!/bin/bash
-# seluruh isi file di ambil dari http://github.com/yurisshOS/
+# 
 # OPENVPN Centos 6
 
 	echo "What port do you want for OpenVPN?"
