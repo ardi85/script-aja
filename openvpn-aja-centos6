@@ -49,28 +49,40 @@ rm -f *.rpm
 
 
 # install openvpn
-wget -O /etc/openvpn/openvpn.tar "https://raw.github.com/yurisshOS/debian7/master/openvpn-debian.tar"
 cd /etc/openvpn/
-tar xf openvpn.tar
-wget -O /etc/openvpn/server.conf "https://github.com/yurisshOS/centos6/raw/master/1194-centos.conf"
-if [ "$OS" == "x86_64" ]; then
-  wget -O /etc/openvpn/server.conf "https://raw.github.com/yurisshOS/centos6/master/1194-centos64.conf"
-fi
-sed -i "s/port 1194/port $PORT/" /etc/openvpn/server.conf
-wget -O /etc/iptables.up.rules "https://raw.github.com/yurisshOS/centos6/master/iptables.up.rules"
-sed -i '$ i\iptables-restore < /etc/iptables.up.rules' /etc/rc.local
-sed -i '$ i\iptables-restore < /etc/iptables.up.rules' /etc/rc.d/rc.local
-sed -i $MYIP2 /etc/iptables.up.rules;
-iptables-restore < /etc/iptables.up.rules
-sysctl -w net.ipv4.ip_forward=1
-sed -i 's/net.ipv4.ip_forward = 0/net.ipv4.ip_forward = 1/g' /etc/sysctl.conf
-service openvpn restart
-chkconfig openvpn on
-cd
+wget --no-check-certificate -O ~/easy-rsa.tar.gz https://github.com/OpenVPN/easy-rsa/archive/2.2.2.tar.gz
+tar xzf ~/easy-rsa.tar.gz -C ~/
+mkdir -p /etc/openvpn/easy-rsa/2.0/
+cp ~/easy-rsa-2.2.2/easy-rsa/2.0/* /etc/openvpn/easy-rsa/2.0/
+rm -rf ~/easy-rsa-2.2.2
+
+cd /etc/openvpn/easy-rsa/2.0/
+cp -u -p openssl-1.0.0.cnf openssl.cnf
+sed -i 's|export KEY_SIZE=1024|export KEY_SIZE=2048|' /etc/openvpn/easy-rsa/2.0/vars
+. /etc/openvpn/easy-rsa/2.0/vars
+. /etc/openvpn/easy-rsa/2.0/clean-all
+export EASY_RSA="${EASY_RSA:-.}"
+"$EASY_RSA/pkitool" --initca $*
+export EASY_RSA="${EASY_RSA:-.}"
+"$EASY_RSA/pkitool" --server server
+export KEY_CN="$CLIENT"
+export EASY_RSA="${EASY_RSA:-.}"
+"$EASY_RSA/pkitool" $CLIENT
+. /etc/openvpn/easy-rsa/2.0/build-dh
 
 # configure openvpn client config
 cd /etc/openvpn/
-wget -O /etc/openvpn/client.ovpn "https://raw.github.com/yurisshOS/centos6/master/1194-client.conf"
+wget -O /etc/openvpn/client.ovpn "https://github.com/ardi85/autoscript/raw/master/1194-client.conf"
+sed -i $MYIP2 /etc/openvpn/client.ovpn;
+echo "<ca>" >> /etc/openvpn/client.ovpn
+cat /etc/openvpn/easy-rsa/2.0/keys/ca.crt >> /etc/openvpn/client.ovpn
+echo -e "</ca>\n" >> /etc/openvpn/client.ovpn
+
+if [ $(ifconfig | cut -c 1-8 | sort | uniq -u | grep venet0 | grep -v venet0:) = "venet0" ];then
+      iptables -t nat -A POSTROUTING -o venet0 -j SNAT --to-source $MYIP
+else
+      iptables -t nat -A POSTROUTING -s 192.168.100.0/24 -o eth0 -j MASQUERADE
+fi
 
 sed -i $MYIP2 /etc/openvpn/client.ovpn;
 sed -1 's/1194/$PORT/g' /etc/openvpn/client.ovpn
@@ -84,18 +96,15 @@ cd
 
 # info 
 clear
-echo "Autoscript OpenVPN Ajah" | tee log-install.txt
-echo "==========================================" | tee -a log-install.txt
-echo ""  | tee -a log-install.txt
-echo "Service"  | tee -a log-install.txt
-echo "-------"  | tee -a log-install.txt
-echo "OpenVPN  : TCP 1194 (client config : http://$MYIP:81/client.tar atau di folder /etc/openvpn/client.tar)"  | tee -a log-install.txt
-echo "-------"  | tee -a log-install.txt
-echo "Script Modified by Yurissh OpenSource"  | tee -a log-install.txt
-echo "Thanks to Original Creator Kang Arie & Mikodemos" | tee -a log-install.txt
-echo ""  | tee -a log-install.txt
-echo "SILAHKAN REBOOT VPS ANDA !"  | tee -a log-install.txt
-echo ""  | tee -a log-install.txt
-echo "==============================================="  | tee -a log-install.txt
-echo "==============================================="  | tee -a log-install.txt
-
+echo "Autoscript OpenVPN Ajah Centos6" | 
+echo "==========================================" | 
+echo ""  | 
+echo "Service"  | 
+echo "-------"  | 
+echo "OpenVPN  : TCP $PORT "
+echo "client config : http://$MYIP:81/client.tar atau di folder /etc/openvpn/client.tar"  | 
+echo "-------"  | 
+echo "Script Modified by Yurissh OpenSource"  | 
+echo "Thanks to Original Creator Kang Arie & Mikodemos" |
+echo ""  | 
+echo "==============================================="  | 
