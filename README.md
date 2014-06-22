@@ -9,6 +9,6 @@ Debian
 
 Centos6
 
-'wget https://raw.githubusercontent.com/ardi85/script-aja/master/openvpn-aja --no-check-certificate -O openvpn-aja.sh; chmod +x openvpn-aja.sh; ./openvpn-aja.sh'
+'wget https://github.com/ardi85/script-aja/raw/master/openvpn-aja-centos6 --no-check-certificate -O openvpn-aja.sh; chmod +x openvpn-aja.sh; ./openvpn-aja.sh'
 
 mudah - mudahan lancar
