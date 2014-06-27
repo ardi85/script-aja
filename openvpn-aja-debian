@@ -50,30 +50,27 @@ if [ -e /etc/openvpn/server.conf ]; then
 		esac
 	done
 else
-	echo 'Welcome to this quick OpenVPN "road warrior" installer'
+	echo 'Selamat Datang di quick OpenVPN "road warrior" installer'
 	echo "Modifikasi Oleh Abu naifa untuk opreker"
 	echo ""
 	# OpenVPN setup and first user creation
-	echo "I need to ask you a few questions before starting the setup"
-	echo "You can leave the default options and just press enter if you are ok with them"
-	echo ""
-	echo "First I need to know the IPv4 address of the network interface you want OpenVPN"
+	echo "Pertama-tama saya perlu tahu alamat IPv4 yang ingin diinstall OpenVPN"
 	echo "listening to."
 	read -p "IP address: " -e -i $IP IP
 	echo ""
-	echo "What port do you want for OpenVPN?"
+	echo "Port untuk OpenVPN?"
 	read -p "Port: " -e -i 1194 PORT
 	echo ""
-	echo "Do you want OpenVPN to be available at port 53 too?"
-	echo "This can be useful to connect under restrictive networks"
-	read -p "Listen at port 53 [y/n]:" -e -i y ALTPORT
+	echo "Apakah Anda ingin OpenVPN akan tersedia pada port 53 juga?"
+	echo "Hal ini dapat berguna untuk menghubungkan ke restrictive networks"
+	read -p "Listen port 53 [y/n]:" -e -i y ALTPORT
 	echo ""
-	echo "Finally, tell me your name for the client cert"
-	echo "Please, use one word only, no special characters"
-	read -p "Client name: " -e -i client CLIENT
+	echo "Sebutkan namamu untuk cert klien"
+	echo "Silakan, gunakan satu kata saja, tidak ada karakter khusus"
+	read -p "Nama Client: " -e -i client CLIENT
 	echo ""
-	echo "Okay, that was all I needed. We are ready to setup your OpenVPN server now"
-	read -n1 -r -p "Press any key to continue..."
+	echo "Oke, itu semua saya butuhkan. Kami siap untuk setup OpenVPN server Anda sekarang"
+	read -n1 -r -p "Tekan sembarang tombol untuk melanjutkan ..."
 	apt-get update
 	apt-get install openvpn iptables openssl -y
 	cp -R /usr/share/doc/openvpn/examples/easy-rsa/ /etc/openvpn
@@ -108,7 +105,7 @@ else
 	# DH params
 	. /etc/openvpn/easy-rsa/2.0/build-dh
 	# Let's configure the server
-	SERVER='
+	cat > /etc/openvpn/server.conf << END
 	port 1194
 	proto tcp
 	dev tun
@@ -135,9 +132,8 @@ else
 	persist-key
 	persist-tun
 	status server-vpn.log
-	verb 3'
-	
-	echo "$SERVER" > /etc/openvpn/server.conf
+	verb 3
+	END
 
 	cd /etc/openvpn/easy-rsa/2.0/keys
 	cp ca.crt ca.key dh1024.pem server.crt server.key /etc/openvpn
@@ -181,6 +177,7 @@ else
 	# IP/port set on the default client.conf so we can add further users
 	# without asking for them
 
+	cat >> ~/ovpn-$CLIENT/$CLIENT.conf << END
 	klient="
 	client
 	proto tcp
@@ -200,9 +197,9 @@ else
 	route-delay 2
 	remote $IP $PORT
 	cipher AES-128-CBC
-	ca [inline]"
+	ca [inline]
+	END
 	
-	echo "$klient" > ~/ovpn-$CLIENT/$CLIENT.conf
 	cp /etc/openvpn/easy-rsa/2.0/keys/ca.crt ~/ovpn-$CLIENT
 
 	cd ~/ovpn-$CLIENT
@@ -218,7 +215,7 @@ else
 	cd ~/
 	rm -rf ovpn-$CLIENT
 	echo ""
-	echo "Finished!"
+	echo "Selesai!"
 	echo ""
 	echo "Your client config is available at ~/ovpn-$CLIENT.tar.gz"
 fi
