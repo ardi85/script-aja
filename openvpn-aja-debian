@@ -105,35 +105,35 @@ else
 	# DH params
 	. /etc/openvpn/easy-rsa/2.0/build-dh
 	# Let's configure the server
-	cat > /etc/openvpn/server.conf << END
-	port 1194
-	proto tcp
-	dev tun
-	tun-mtu 1500
-	tun-mtu-extra 32
-	mssfix 1450
-	ca /etc/openvpn/ca.crt
-	cert /etc/openvpn/server.crt
-	key /etc/openvpn/server.key
-	dh /etc/openvpn/dh1024.pem
-	plugin /usr/lib/openvpn/openvpn-auth-pam.so /etc/pam.d/login
-	client-cert-not-required
-	username-as-common-name
-	server 10.8.0.0 255.255.255.0
-	ifconfig-pool-persist ipp.txt
-	push "redirect-gateway def1"
-	push "dhcp-option DNS 8.8.8.8"
-	push "dhcp-option DNS 8.8.4.4"
-	push "route-method exe"
-	push "route-delay 2"
-	keepalive 5 30
-	cipher AES-128-CBC
-	comp-lzo
-	persist-key
-	persist-tun
-	status server-vpn.log
-	verb 3
-	END
+cat > /etc/openvpn/server.conf << END
+port 1194
+proto tcp
+dev tun
+tun-mtu 1500
+tun-mtu-extra 32
+mssfix 1450
+ca /etc/openvpn/ca.crt
+cert /etc/openvpn/server.crt
+key /etc/openvpn/server.key
+dh /etc/openvpn/dh1024.pem
+plugin /usr/lib/openvpn/openvpn-auth-pam.so /etc/pam.d/login
+client-cert-not-required
+username-as-common-name
+server 10.8.0.0 255.255.255.0
+ifconfig-pool-persist ipp.txt
+push "redirect-gateway def1"
+push "dhcp-option DNS 8.8.8.8"
+push "dhcp-option DNS 8.8.4.4"
+push "route-method exe"
+push "route-delay 2"
+keepalive 5 30
+cipher AES-128-CBC
+comp-lzo
+persist-key
+persist-tun
+status server-vpn.log
+verb 3
+END
 
 	cd /etc/openvpn/easy-rsa/2.0/keys
 	cp ca.crt ca.key dh1024.pem server.crt server.key /etc/openvpn
@@ -177,28 +177,28 @@ else
 	# IP/port set on the default client.conf so we can add further users
 	# without asking for them
 
-	cat >> ~/ovpn-$CLIENT/$CLIENT.conf << END
-	klient="
-	client
-	proto tcp
-	persist-key
-	persist-tun
-	dev tun
-	pull
-	comp-lzo
-	ns-cert-type server
-	verb 3
-	mute 2
-	mute-replay-warnings
-	auth-user-pass
-	redirect-gateway def1
-	script-security 2
-	route-method exe
-	route-delay 2
-	remote $IP $PORT
-	cipher AES-128-CBC
-	ca [inline]
-	END
+cat >> ~/ovpn-$CLIENT/$CLIENT.conf << END
+klient="
+client
+proto tcp
+persist-key
+persist-tun
+dev tun
+pull
+comp-lzo
+ns-cert-type server
+verb 3
+mute 2
+mute-replay-warnings
+auth-user-pass
+redirect-gateway def1
+script-security 2
+route-method exe
+route-delay 2
+remote $IP $PORT
+cipher AES-128-CBC
+ca [inline]
+END
 	
 	cp /etc/openvpn/easy-rsa/2.0/keys/ca.crt ~/ovpn-$CLIENT
 
