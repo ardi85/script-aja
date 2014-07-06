@@ -4,7 +4,7 @@
 # This script will only work on Debian-based systems. It isn't bulletproof but
 # it will probably work if you simply want to setup a VPN on your Debian/Ubuntu
 # VPS. It has been designed to be as unobtrusive and universal as possible.
-
+kl
 if [ $USER != 'root' ]; then
 	echo "Sorry, you need to run this as root"
 	exit
@@ -105,7 +105,7 @@ else
 	# DH params
 	. /etc/openvpn/easy-rsa/2.0/build-dh
 	# Let's configure the server
-cat > /etc/openvpn/server.conf << END
+cat > /etc/openvpn/server.conf <<-END
 port 1194
 proto tcp
 dev tun
@@ -177,8 +177,7 @@ END
 	# IP/port set on the default client.conf so we can add further users
 	# without asking for them
 
-cat >> ~/ovpn-$CLIENT/$CLIENT.conf << END
-klient="
+cat >> ~/ovpn-$CLIENT/$CLIENT.conf <<-END
 client
 proto tcp
 persist-key
