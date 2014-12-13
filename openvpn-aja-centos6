@@ -85,13 +85,12 @@ else
 fi
 
 sed -i $MYIP2 /etc/openvpn/client.ovpn;
-sed -1 's/1194/$PORT/g' /etc/openvpn/client.ovpn
+sed -i 's/1194/$PORT/g' /etc/openvpn/client.ovpn
 echo "username" > pass.txt
 echo "password" >> pass.txt
 tar cf client.tar client.ovpn pass.txt
-cp client.tar /home/vps/public_html/
-cp client.tar /var/www/
-cp client.tar /var/www/html
+cp client.tar /etc/openvpn/
+cp client.tar /root/
 cd
 
 # info 
