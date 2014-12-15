@@ -71,7 +71,7 @@ export EASY_RSA="${EASY_RSA:-.}"
 "$EASY_RSA/pkitool" $CLIENT
 . /etc/openvpn/easy-rsa/2.0/build-dh
 
-wget -O /etc/openvpn/server.conf "https://github.com/ardi85/autoscript/raw/master/1194-server.conf"
+wget -O /etc/openvpn/server.conf "https://github.com/ardi85/autoscript/raw/master/1194-centos.conf"
 # configure openvpn client config
 cd /etc/openvpn/
 wget -O /etc/openvpn/client.ovpn "https://github.com/ardi85/autoscript/raw/master/1194-client.conf"
