@@ -49,6 +49,7 @@ rm -f *.rpm
 
 
 # install openvpn
+yum -y install openvpn
 cd /etc/openvpn/
 wget --no-check-certificate -O ~/easy-rsa.tar.gz https://github.com/OpenVPN/easy-rsa/archive/2.2.2.tar.gz
 tar xzf ~/easy-rsa.tar.gz -C ~/
