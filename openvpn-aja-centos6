@@ -58,6 +58,7 @@ cp ~/easy-rsa-2.2.2/easy-rsa/2.0/* /etc/openvpn/easy-rsa/2.0/
 rm -rf ~/easy-rsa-2.2.2
 
 cd /etc/openvpn/easy-rsa/2.0/
+sed -i 's|`$EASY_RSA/whichopensslcnf $EASY_RSA`|/etc/openvpn/easy-rsa/2.0/openssl-1.0.0.cnf|' vars
 #sed -i 's|export KEY_SIZE=1024|export KEY_SIZE=2048|' /etc/openvpn/easy-rsa/2.0/vars
 . /etc/openvpn/easy-rsa/2.0/vars
 . /etc/openvpn/easy-rsa/2.0/clean-all
@@ -68,8 +69,8 @@ cd /etc/openvpn/easy-rsa/2.0/
 #export KEY_CN="$CLIENT"
 #export EASY_RSA="${EASY_RSA:-.}"
 #"$EASY_RSA/pkitool" $CLIENT
-. /etc/openvpn/easy-rsa/2.0/build-key-server server
 . /etc/openvpn/easy-rsa/2.0/build-ca
+. /etc/openvpn/easy-rsa/2.0/build-key-server server
 . /etc/openvpn/easy-rsa/2.0/build-dh
 
 wget -O /etc/openvpn/server.conf "https://github.com/ardi85/autoscript/raw/master/1194-centos.conf"
