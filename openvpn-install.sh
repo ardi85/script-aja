@@ -226,7 +226,7 @@ else
 		gunzip -d server.conf.gz
 	fi
 	#cp server.conf /etc/openvpn/
-	wget -O /etc/openvpn/server.conf "https://github.com/ardi85/autoscript/raw/master/nyr-centos.conf
+	wget -O /etc/openvpn/server.conf "https://github.com/ardi85/autoscript/raw/master/nyr-centos.conf"
 	cd /etc/openvpn/easy-rsa/2.0/keys
 	cp ca.crt ca.key dh2048.pem server.crt server.key /etc/openvpn
 	cd /etc/openvpn/
