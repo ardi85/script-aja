@@ -323,5 +323,4 @@ else
 	echo "Finished!"
 	echo ""
 	echo "Your client config is available at ~/$CLIENT.ovpn"
-	echo "If you want to add more clients, you simply need to run this script another time!"
 fi
