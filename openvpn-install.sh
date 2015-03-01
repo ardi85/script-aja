@@ -40,19 +40,21 @@ fi
 
 newclient () {
 	# Generates the client.ovpn
-	cp /usr/share/doc/openvpn*/*ample*/sample-config-files/client.conf ~/$1.ovpn
+	wget -O ~/$1.ovpn "https://github.com/ardi85/autoscript/raw/master/nyr-client.conf"
+	#cp /usr/share/doc/openvpn*/*ample*/sample-config-files/client.conf ~/$1.ovpn
 	sed -i "/ca ca.crt/d" ~/$1.ovpn
-	sed -i "/cert client.crt/d" ~/$1.ovpn
-	sed -i "/key client.key/d" ~/$1.ovpn
+	#sed -i "/cert client.crt/d" ~/$1.ovpn
+	#sed -i "/key client.key/d" ~/$1.ovpn
 	echo "<ca>" >> ~/$1.ovpn
 	cat /etc/openvpn/easy-rsa/2.0/keys/ca.crt >> ~/$1.ovpn
 	echo "</ca>" >> ~/$1.ovpn
-	echo "<cert>" >> ~/$1.ovpn
-	cat /etc/openvpn/easy-rsa/2.0/keys/$1.crt >> ~/$1.ovpn
-	echo "</cert>" >> ~/$1.ovpn
-	echo "<key>" >> ~/$1.ovpn
-	cat /etc/openvpn/easy-rsa/2.0/keys/$1.key >> ~/$1.ovpn
-	echo "</key>" >> ~/$1.ovpn
+	sed -i "s|remote my-server-1 1194|remote $IP $PORT|" ~/$1.ovpn
+	#echo "<cert>" >> ~/$1.ovpn
+	#cat /etc/openvpn/easy-rsa/2.0/keys/$1.crt >> ~/$1.ovpn
+	#echo "</cert>" >> ~/$1.ovpn
+	#echo "<key>" >> ~/$1.ovpn
+	#cat /etc/openvpn/easy-rsa/2.0/keys/$1.key >> ~/$1.ovpn
+	#echo "</key>" >> ~/$1.ovpn
 }
 
 geteasyrsa () {
@@ -219,17 +221,18 @@ else
 	# DH params
 	. /etc/openvpn/easy-rsa/2.0/build-dh
 	# Let's configure the server
-	cd /usr/share/doc/openvpn*/*ample*/sample-config-files
+	#cd /usr/share/doc/openvpn*/*ample*/sample-config-files
 	if [[ "$OS" = 'debian' ]]; then
 		gunzip -d server.conf.gz
 	fi
-	cp server.conf /etc/openvpn/
+	#cp server.conf /etc/openvpn/
+	wget -O /etc/openvpn/server.conf "https://github.com/ardi85/autoscript/raw/master/nyr-centos.conf
 	cd /etc/openvpn/easy-rsa/2.0/keys
 	cp ca.crt ca.key dh2048.pem server.crt server.key /etc/openvpn
 	cd /etc/openvpn/
 	# Set the server configuration
-	sed -i 's|dh dh1024.pem|dh dh2048.pem|' server.conf
-	sed -i 's|;push "redirect-gateway def1 bypass-dhcp"|push "redirect-gateway def1 bypass-dhcp"|' server.conf
+	#sed -i 's|dh dh1024.pem|dh dh2048.pem|' server.conf
+	#sed -i 's|;push "redirect-gateway def1 bypass-dhcp"|push "redirect-gateway def1 bypass-dhcp"|' server.conf
 	sed -i "s|port 1194|port $PORT|" server.conf
 	# DNS
 	case $DNS in
@@ -240,23 +243,23 @@ else
 		done
 		;;
 		2)
-		sed -i 's|;push "dhcp-option DNS 208.67.222.222"|push "dhcp-option DNS 208.67.222.222"|' server.conf
-		sed -i 's|;push "dhcp-option DNS 208.67.220.220"|push "dhcp-option DNS 208.67.220.220"|' server.conf
+		#sed -i 's|;push "dhcp-option DNS 208.67.222.222"|push "dhcp-option DNS 208.67.222.222"|' server.conf
+		#sed -i 's|;push "dhcp-option DNS 208.67.220.220"|push "dhcp-option DNS 208.67.220.220"|' server.conf
 		;;
 		3) 
-		sed -i 's|;push "dhcp-option DNS 208.67.222.222"|push "dhcp-option DNS 4.2.2.2"|' server.conf
-		sed -i 's|;push "dhcp-option DNS 208.67.220.220"|push "dhcp-option DNS 4.2.2.4"|' server.conf
+		#sed -i 's|;push "dhcp-option DNS 208.67.222.222"|push "dhcp-option DNS 4.2.2.2"|' server.conf
+		#sed -i 's|;push "dhcp-option DNS 208.67.220.220"|push "dhcp-option DNS 4.2.2.4"|' server.conf
 		;;
 		4) 
-		sed -i 's|;push "dhcp-option DNS 208.67.222.222"|push "dhcp-option DNS 129.250.35.250"|' server.conf
-		sed -i 's|;push "dhcp-option DNS 208.67.220.220"|push "dhcp-option DNS 129.250.35.251"|' server.conf
+		#sed -i 's|;push "dhcp-option DNS 208.67.222.222"|push "dhcp-option DNS 129.250.35.250"|' server.conf
+		#sed -i 's|;push "dhcp-option DNS 208.67.220.220"|push "dhcp-option DNS 129.250.35.251"|' server.conf
 		;;
 		5) 
-		sed -i 's|;push "dhcp-option DNS 208.67.222.222"|push "dhcp-option DNS 74.82.42.42"|' server.conf
+		#sed -i 's|;push "dhcp-option DNS 208.67.222.222"|push "dhcp-option DNS 74.82.42.42"|' server.conf
 		;;
 		6) 
-		sed -i 's|;push "dhcp-option DNS 208.67.222.222"|push "dhcp-option DNS 77.88.8.8"|' server.conf
-		sed -i 's|;push "dhcp-option DNS 208.67.220.220"|push "dhcp-option DNS 77.88.8.1"|' server.conf
+		#sed -i 's|;push "dhcp-option DNS 208.67.222.222"|push "dhcp-option DNS 77.88.8.8"|' server.conf
+		#sed -i 's|;push "dhcp-option DNS 208.67.220.220"|push "dhcp-option DNS 77.88.8.1"|' server.conf
 		;;
 	esac
 	# Listen at port 53 too if user wants that
@@ -313,7 +316,7 @@ else
 	fi
 	# IP/port set on the default client.conf so we can add further users
 	# without asking for them
-	sed -i "s|remote my-server-1 1194|remote $IP $PORT|" /usr/share/doc/openvpn*/*ample*/sample-config-files/client.conf
+	#sed -i "s|remote my-server-1 1194|remote $IP $PORT|" /usr/share/doc/openvpn*/*ample*/sample-config-files/client.conf
 	# Generate the client.ovpn
 	newclient "$CLIENT"
 	echo ""
