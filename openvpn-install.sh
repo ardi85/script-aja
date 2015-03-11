@@ -42,19 +42,19 @@ newclient () {
 	# Generates the client.ovpn
 	wget -O ~/$1.ovpn "https://github.com/ardi85/autoscript/raw/master/nyr-client.conf"
 	#cp /usr/share/doc/openvpn*/*ample*/sample-config-files/client.conf ~/$1.ovpn
-	sed -i "/ca ca.crt/d" ~/$1.ovpn
+	#sed -i "/ca ca.crt/d" ~/$1.ovpn
 	#sed -i "/cert client.crt/d" ~/$1.ovpn
 	#sed -i "/key client.key/d" ~/$1.ovpn
 	echo "<ca>" >> ~/$1.ovpn
 	cat /etc/openvpn/easy-rsa/2.0/keys/ca.crt >> ~/$1.ovpn
 	echo "</ca>" >> ~/$1.ovpn
 	sed -i "s|remote my-server-1 1194|remote $IP $PORT|" ~/$1.ovpn
-	#echo "<cert>" >> ~/$1.ovpn
-	#cat /etc/openvpn/easy-rsa/2.0/keys/$1.crt >> ~/$1.ovpn
-	#echo "</cert>" >> ~/$1.ovpn
-	#echo "<key>" >> ~/$1.ovpn
-	#cat /etc/openvpn/easy-rsa/2.0/keys/$1.key >> ~/$1.ovpn
-	#echo "</key>" >> ~/$1.ovpn
+	echo "<cert>" >> ~/$1.ovpn
+	cat /etc/openvpn/easy-rsa/2.0/keys/$1.crt >> ~/$1.ovpn
+	echo "</cert>" >> ~/$1.ovpn
+	echo "<key>" >> ~/$1.ovpn
+	cat /etc/openvpn/easy-rsa/2.0/keys/$1.key >> ~/$1.ovpn
+	echo "</key>" >> ~/$1.ovpn
 }
 
 geteasyrsa () {
